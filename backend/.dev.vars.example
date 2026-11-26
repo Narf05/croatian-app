@@ -1,0 +1,4 @@
+# Copy to backend/.dev.vars for local development (`npm run dev -w backend`). Never commit .dev.vars.
+ANTHROPIC_API_KEY=your-anthropic-api-key
+# A long random string (at least 32 characters). Enter the same value in the app under Postavke.
+ACCESS_TOKEN=replace-with-a-long-random-string
