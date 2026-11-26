@@ -23,17 +23,23 @@ Decisions made with the user before coding started (2026-11-26). The features th
   - Backend: a separate server/service, deployed independently. Its exact role is still open (see below).
   - Both must be developed, tested and deployed independently, talking only over an HTTP API.
 
+- **Backend role (decided):** a thin, secure proxy for the Claude API. The Claude API key lives only on the
+  backend as a server secret, never on the phone or in the browser. This replaces the original
+  "API key is stored locally" requirement. The backend stores no learning data; backups stay as the
+  export/import file. AI features still show a clear message when offline.
+- **Repo layout (decided):** one repo with `frontend/` and `backend/` folders; each server deploys its own folder.
+
 ## Open (to be asked before/while coding)
 - How grammar drills are generated (AI batch with Haiku vs Sonnet, built-in starter set).
-- Backend role: e.g. proxy for the Claude API so the API key lives on the server instead of the phone
-  (this would change the "API key is stored locally" requirement), and/or optional backup sync.
-- Backend stack and hosting (frontend stays on GitHub Pages unless decided otherwise).
-- Protecting the backend so only the user can use it (single-user auth, e.g. a personal access token).
-- Repo layout: one repo with `frontend/` and `backend/` folders, or two separate repos.
+- Backend stack and hosting. Proposal, awaiting confirmation: TypeScript + Hono on Cloudflare Workers
+  (free tier, always on, API key stored as an encrypted Worker secret).
+- Backend protection. Proposal, awaiting confirmation: a long personal access token entered once in the app
+  (stored on the phone); the backend rejects every request without it. Plus a monthly spending limit
+  in the Anthropic console and a simple per-day request limit on the backend.
 
 ## Technical
 - Plain TypeScript + Vite, no UI framework; PWA with service worker.
 - IndexedDB for all data; export/import as a single JSON backup file.
-- Claude API called directly from the browser with the locally stored key.
+- Frontend calls the backend; only the backend calls the Claude API (key stored as a server secret).
 - Vitest + Playwright; AI always mocked in tests.
 - Public GitHub repo `Narf05/croatian-app`, deployed to GitHub Pages (needed for HTTPS / install on phone).

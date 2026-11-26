@@ -30,15 +30,16 @@ Read these first:
 ## Tech stack
 - **Frontend and backend are deployed on separate servers.** Keep them strictly separated:
   no shared runtime, communication only over an HTTP API, each with its own tests and deploy.
-  The backend's role and stack are still open – see `DECISIONS.md` before building anything backend-related.
+  The backend is a secure proxy for the Claude API: the API key lives only there. Layout: `frontend/` and
+  `backend/` in this repo. Backend stack, hosting and auth: check `DECISIONS.md` before building.
 - Frontend: plain TypeScript + Vite, no UI framework. PWA (manifest + service worker) for install and offline use.
-- Storage: IndexedDB on the device. Nothing is stored on a server.
-- AI: Claude API called directly from the browser with the user's key.
+- Storage: all learning data in IndexedDB on the device. The backend stores no learning data.
+- AI: the frontend calls the backend; only the backend calls the Claude API.
   - Haiku: quick translation, translation bubble, "Kako funkcionira", words of the day.
   - Sonnet: lessons, conversation, song translation, weekly analysis.
   - Model IDs live in a single config module, never scattered through the code.
 - Tests: Vitest (unit) + Playwright (e2e). Note: in the e2e suite, pass `--trace off` unless debugging.
-- Hosting: GitHub Pages from the public repo `Narf05/croatian-app`.
+- Hosting: frontend on GitHub Pages from the public repo `Narf05/croatian-app`; backend on its own server.
 
 ## Conventions
 - All UI text is in **Croatian** (standard Croatian, ijekavian). Code, comments, commits and docs in English.
@@ -46,12 +47,15 @@ Read these first:
 - Keep UI strings in one place (e.g. `src/i18n/hr.ts`), not inline throughout the code.
 - AI is a tool, not an observer: call it only inside features that need it and in the weekly
   analysis. Never in the background, never without a user action.
-- Every AI feature must show a clear Croatian message when offline or when no API key is set.
+- Every AI feature must show a clear Croatian message when offline, when the backend is unreachable,
+  or when the access is not set up.
 - Keep it minimal and readable. Small modules, typed functions, no unnecessary dependencies.
 
 ## Secrets
-- The Claude API key is entered in the app and stored only in the device's IndexedDB.
-- Never put an API key in the code, in tests, in `.env` files that get committed, or in commit messages.
+- The Claude API key lives **only on the backend** as a server secret. It must never reach the
+  frontend, the phone, the browser, logs, or API responses.
+- Backend secrets for local development go in `backend/.env` (gitignored) with a `backend/.env.example`.
+- Never put an API key or token in the code, in tests, in committed files, or in commit messages.
 - The repo is **public**: check `git diff --staged` for anything sensitive before every commit.
 
 ## Workflow
