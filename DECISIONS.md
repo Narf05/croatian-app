@@ -17,8 +17,19 @@ Decisions made with the user before coding started (2026-11-26). The features th
 - **Conversation:** text chat (phone keyboard dictation works too).
 - **Serbian/Bosnian differences:** badge with the other variant, e.g. `tjedan · SR/BS: nedelja`.
 
+## Architecture
+- **Frontend and backend run on separate servers** (user requirement, 2026-11-26).
+  - Frontend: the static PWA (offline-first, all learning data in IndexedDB on the phone).
+  - Backend: a separate server/service, deployed independently. Its exact role is still open (see below).
+  - Both must be developed, tested and deployed independently, talking only over an HTTP API.
+
 ## Open (to be asked before/while coding)
 - How grammar drills are generated (AI batch with Haiku vs Sonnet, built-in starter set).
+- Backend role: e.g. proxy for the Claude API so the API key lives on the server instead of the phone
+  (this would change the "API key is stored locally" requirement), and/or optional backup sync.
+- Backend stack and hosting (frontend stays on GitHub Pages unless decided otherwise).
+- Protecting the backend so only the user can use it (single-user auth, e.g. a personal access token).
+- Repo layout: one repo with `frontend/` and `backend/` folders, or two separate repos.
 
 ## Technical
 - Plain TypeScript + Vite, no UI framework; PWA with service worker.

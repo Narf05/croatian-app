@@ -28,7 +28,10 @@ Read these first:
 - In the end-of-task summary, list which tests were added and the test results.
 
 ## Tech stack
-- Plain TypeScript + Vite, no UI framework. PWA (manifest + service worker) for install and offline use.
+- **Frontend and backend are deployed on separate servers.** Keep them strictly separated:
+  no shared runtime, communication only over an HTTP API, each with its own tests and deploy.
+  The backend's role and stack are still open – see `DECISIONS.md` before building anything backend-related.
+- Frontend: plain TypeScript + Vite, no UI framework. PWA (manifest + service worker) for install and offline use.
 - Storage: IndexedDB on the device. Nothing is stored on a server.
 - AI: Claude API called directly from the browser with the user's key.
   - Haiku: quick translation, translation bubble, "Kako funkcionira", words of the day.
