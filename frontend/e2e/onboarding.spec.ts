@@ -46,6 +46,24 @@ test("first launch: connect, take the placement test, confirm levels and goals",
 
   // The test can be paused: answers survive a reload.
   await page.locator(".question-block").first().getByLabel("week", { exact: true }).check();
+  // Wait until the answer is stored on the device, then reload.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          new Promise<unknown>((resolve) => {
+            const req = indexedDB.open("croatian-app");
+            req.onsuccess = () => {
+              const all = req.result.transaction("evaluations").objectStore("evaluations").getAll();
+              all.onsuccess = () => {
+                req.result.close();
+                resolve(all.result.map((e: { answers: Record<string, string> }) => e.answers["vocabulary.0"]));
+              };
+            };
+          }),
+      ),
+    )
+    .toEqual(["week"]);
   await page.reload();
   await expect(page.locator(".question-block").first().getByLabel("week", { exact: true })).toBeChecked();
 

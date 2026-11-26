@@ -1,6 +1,7 @@
 import type { Subject, Sublevel, TaskOutput, TestQuestion } from "@croatian-app/shared";
 import { SUBJECTS } from "@croatian-app/shared/constants";
 import { ai } from "../api/client";
+import { db } from "../db/db";
 import { getRow, listRows, putRow } from "../db/repo";
 import { getSettings, setSetting } from "../db/settings";
 import { newId } from "../lib/id";
@@ -73,18 +74,30 @@ export async function startEvaluation(kind: EvaluationKind, now = new Date()): P
   return ev;
 }
 
+/**
+ * Change an in-progress evaluation inside one transaction, so quick successive answers
+ * are applied one after another and none is lost.
+ */
+async function updateInProgress(id: string, change: (ev: Evaluation) => void): Promise<void> {
+  const tx = (await db()).transaction("evaluations", "readwrite");
+  const ev = await tx.store.get(id);
+  if (ev && ev.status === "in_progress") {
+    change(ev);
+    await tx.store.put(ev);
+  }
+  await tx.done;
+}
+
 export async function saveAnswer(id: string, key: string, value: string): Promise<void> {
-  const ev = await getRow("evaluations", id);
-  if (!ev || ev.status !== "in_progress") return;
-  ev.answers[key] = value;
-  await putRow("evaluations", ev);
+  await updateInProgress(id, (ev) => {
+    ev.answers[key] = value;
+  });
 }
 
 export async function saveWriting(id: string, text: string): Promise<void> {
-  const ev = await getRow("evaluations", id);
-  if (!ev || ev.status !== "in_progress") return;
-  ev.writingText = text;
-  await putRow("evaluations", ev);
+  await updateInProgress(id, (ev) => {
+    ev.writingText = text;
+  });
 }
 
 /** Submit: scores + writing go to the AI, which suggests levels and next month's goals. */

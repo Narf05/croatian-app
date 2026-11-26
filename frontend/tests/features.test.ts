@@ -71,6 +71,23 @@ describe("evaluation", () => {
     expect((await getSettings()).onboarded).toBe(true);
   });
 
+  it("keeps every answer when several are saved at the same time", async () => {
+    const ev = await startEvaluation("placement", now);
+    await Promise.all([
+      saveAnswer(ev.id, "vocabulary.0", "week"),
+      saveAnswer(ev.id, "vocabulary.1", "railway station"),
+      saveAnswer(ev.id, "grammar.0", "prijateljem"),
+      saveWriting(ev.id, "Bok!"),
+    ]);
+    const stored = await getRow("evaluations", ev.id);
+    expect(stored?.answers).toEqual({
+      "vocabulary.0": "week",
+      "vocabulary.1": "railway station",
+      "grammar.0": "prijateljem",
+    });
+    expect(stored?.writingText).toBe("Bok!");
+  });
+
   it("does not change answers after submission", async () => {
     const ev = await startEvaluation("placement", now);
     await submitEvaluation(ev.id);
