@@ -5,7 +5,8 @@ Personal, single-user, offline-first Croatian learning PWA. The workspace rules 
 
 Read these first:
 - `REQUIREMENTS.md` – what the app must do (source of truth for features)
-- `DECISIONS.md` – product and technical decisions already made (don't re-ask them)
+- `DECISIONS.md` – product and technical decisions already made (don't re-ask them).
+  **Where it disagrees with `REQUIREMENTS.md`, `DECISIONS.md` wins.**
 - `PROMPT.md` – the original build prompt (same content as REQUIREMENTS.md)
 
 ## ⚠️ TESTS ARE MANDATORY – VERY IMPORTANT
@@ -35,15 +36,17 @@ Read these first:
 - Frontend: plain TypeScript + Vite, no UI framework. PWA (manifest + service worker) for install and offline use.
 - Storage: all learning data in IndexedDB on the device. The backend stores no learning data.
 - AI: the frontend calls the backend; only the backend calls the Claude API.
-  - Haiku: quick translation, translation bubble, "Kako funkcionira", words of the day.
-  - Sonnet: lessons, conversation, song translation, weekly analysis.
+  - Haiku: quick translation, translation bubble, "Kako funkcionira", words of the day, grammar drills.
+  - Sonnet: lessons, conversation, song translation, weekly analysis, evaluations and monthly goals.
   - Model IDs live in a single config module, never scattered through the code.
 - Tests: Vitest (unit) + Playwright (e2e). Note: in the e2e suite, pass `--trace off` unless debugging.
 - Hosting: frontend on GitHub Pages from the public repo `Narf05/croatian-app`; backend on its own server.
 
 ## Conventions
-- All UI text is in **Croatian** (standard Croatian, ijekavian). Code, comments, commits and docs in English.
-- Translations and explanations shown to the user are in English.
+- **The app must stay entirely in Croatian** (standard Croatian, ijekavian) – very important.
+  Code, comments, commits and docs in English.
+- Word translations are to English. Explanations are Croatian with an "EN" toggle for the English version.
+  Only exercise instructions and warnings/errors get an English subtitle. Details: `DECISIONS.md` → Language.
 - Keep UI strings in one place (e.g. `src/i18n/hr.ts`), not inline throughout the code.
 - AI is a tool, not an observer: call it only inside features that need it and in the weekly
   analysis. Never in the background, never without a user action.
