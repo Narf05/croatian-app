@@ -1,0 +1,49 @@
+name: Deploy frontend (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w frontend
+        env:
+          BASE_PATH: /croatian-app/
+          # Set this repository variable to the backend URL once it is deployed
+          # (Settings → Secrets and variables → Actions → Variables → BACKEND_URL).
+          VITE_BACKEND_URL: ${{ vars.BACKEND_URL }}
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
