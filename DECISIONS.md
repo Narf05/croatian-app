@@ -28,14 +28,14 @@ Decisions made with the user before coding started (2026-11-26). The features th
   "API key is stored locally" requirement. The backend stores no learning data; backups stay as the
   export/import file. AI features still show a clear message when offline.
 - **Repo layout (decided):** one repo with `frontend/` and `backend/` folders; each server deploys its own folder.
+- **Backend stack and hosting (decided):** TypeScript + Hono on Cloudflare Workers (free tier, always on,
+  API key stored as an encrypted Worker secret). Needs a free Cloudflare account from the user.
+- **Backend protection (decided):** a long personal access token entered once in the app (stored on the phone);
+  the backend rejects every request without it. Plus a monthly spending limit in the Anthropic console
+  (set by the user) and a simple per-day request limit on the backend.
 
 ## Open (to be asked before/while coding)
 - How grammar drills are generated (AI batch with Haiku vs Sonnet, built-in starter set).
-- Backend stack and hosting. Proposal, awaiting confirmation: TypeScript + Hono on Cloudflare Workers
-  (free tier, always on, API key stored as an encrypted Worker secret).
-- Backend protection. Proposal, awaiting confirmation: a long personal access token entered once in the app
-  (stored on the phone); the backend rejects every request without it. Plus a monthly spending limit
-  in the Anthropic console and a simple per-day request limit on the backend.
 
 ## Technical
 - Plain TypeScript + Vite, no UI framework; PWA with service worker.
