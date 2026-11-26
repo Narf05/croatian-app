@@ -1,11 +1,5 @@
-import {
-  CEFR_LEVELS,
-  SUBJECTS,
-  SUBLEVELS,
-  type CefrLevel,
-  type Subject,
-  type Sublevel,
-} from "@croatian-app/shared";
+import type { CefrLevel, Subject, Sublevel } from "@croatian-app/shared";
+import { CEFR_LEVELS, SUBJECTS, SUBLEVELS } from "@croatian-app/shared/constants";
 
 export type Levels = Record<Subject, Sublevel>;
 

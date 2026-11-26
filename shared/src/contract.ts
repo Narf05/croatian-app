@@ -6,6 +6,9 @@
  * The frontend only imports the inferred types.
  */
 import { z } from "zod";
+import { CEFR_LEVELS, SUBJECTS, SUBLEVELS } from "./constants";
+
+export { CEFR_LEVELS, SUBJECTS, SUBLEVELS };
 
 // ---------- shared building blocks ----------
 
@@ -16,18 +19,12 @@ export const Bilingual = z.strictObject({
 });
 export type Bilingual = z.infer<typeof Bilingual>;
 
-export const SUBJECTS = ["vocabulary", "grammar", "reading", "writing"] as const;
 export const Subject = z.enum(SUBJECTS);
 export type Subject = z.infer<typeof Subject>;
 
-export const SUBLEVELS = [
-  "A1.1", "A1.2", "A2.1", "A2.2", "B1.1", "B1.2",
-  "B2.1", "B2.2", "C1.1", "C1.2", "C2.1", "C2.2",
-] as const;
 export const Sublevel = z.enum(SUBLEVELS);
 export type Sublevel = z.infer<typeof Sublevel>;
 
-export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 export const CefrLevel = z.enum(CEFR_LEVELS);
 export type CefrLevel = z.infer<typeof CefrLevel>;
 

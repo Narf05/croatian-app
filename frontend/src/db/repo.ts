@@ -1,4 +1,5 @@
-import { parseStressed, type WordEntry } from "@croatian-app/shared";
+import type { WordEntry } from "@croatian-app/shared";
+import { parseStressed } from "@croatian-app/shared/stress";
 import { newId } from "../lib/id";
 import { isDue, newSrs, review, type Grade } from "../lib/srs";
 import type { Activity, ActivityType, Source, Word, WordList } from "../types";
